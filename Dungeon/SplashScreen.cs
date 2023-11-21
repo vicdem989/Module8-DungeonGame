@@ -96,7 +96,7 @@ namespace Dungeon
 
             if (exit)
             {
-                OnExitScreen(typeof(MenuScreen), null );
+                OnExitScreen(typeof(MenuScreen), null);
             }
         }
 

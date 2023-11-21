@@ -2,6 +2,7 @@
 
 
 using System.Dynamic;
+using System.Formats.Asn1;
 using Microsoft.VisualBasic;
 using Utils;
 
@@ -27,6 +28,7 @@ namespace Dungeon
         public string Weapon { get; set; }
         public int HitPoints { get; set; }
         public int Strength { get; set; }
+        public int Hp { get; set; }
 
         private string[] adventureGameCharacterNames = new string[] { "Aria", "Thorin", "Zara", "Jasper", "Elena", "Cedric", "Lyra", "Orion", "Seraphina", "Gareth" };
         private string[] adventureGameSurnames = new string[] { "the Brave", "Ironheart", "Shadowwalker", "the Wise", "Stormchaser", "Dragonbane", "Nightwhisper", "the Fearless", "Oakenshield", "Lightbringer" };
@@ -48,16 +50,18 @@ namespace Dungeon
             string method = attackMethods.RandomElement(); // Note: I am using an extension I added to the array type in utils/array.cs to do this.
             Random rnd = new Random();
             int damage = rnd.Next(0, HitPoints + 1);
-            string description = $"{Name} {method} {Weapon}, causing {damage} of damage to you";
+            string description = $"{Name} {Hp} {method} {Weapon}, causing {ANSICodes.Colors.Red}{damage}{ANSICodes.Reset} damage to you";
             if (damage == 0) // Epic failure 
             {
-                description = $"{Name} trys to {method} {Weapon}, but misses fantasticly";
+                description = $"{Name} {Hp} trys to {method} {Weapon}, but misses fantasticly";
             }
             else if (damage == HitPoints) // Critical hit
             {
-                description = $"{Name} lunges and {method} {Weapon}, causing masive damage to you";
+                description = $"{Name} {Hp}  lunges and {method} {Weapon}, causing {ANSICodes.Colors.Red}{ANSICodes.Effects.Bold}massive{ANSICodes.Reset} damage to you";
             }
+            
 
+            DungeonGame.currentDmg = damage;
             return new Dungeon.Attack() { Description = description, Damage = damage };
 
         }
@@ -79,12 +83,13 @@ namespace Dungeon
                 symbole = itemType;
                 value = new Random().Next(5, 21);
                 description = $"A small bag of loot with the value {value}";
+                DungeonGame.addToGold = value;
             }
             else if (itemType == "*")
             {
                 symbole = itemType;
                 value = new Random().Next(3, 8);
-                description = "A smal viale of poison, doing {value} points of damage";
+                description = $"A smal viale of poison, doing {value} points of damage";
             }
 
         }
@@ -114,6 +119,9 @@ namespace Dungeon
         int delta_y;
         int delta_x;
 
+        public static int currentDmg;
+        public static int addToGold;
+
 
         object[][] levelMap;
 
@@ -133,6 +141,8 @@ namespace Dungeon
             string rawFileData = HelperFunctions.ReadFile(levelFile);
             char[][] tempMap = HelperFunctions.Create2DArrayFromMultiLineString(rawFileData);
             object[][] outputMap = new object[tempMap.Length][];
+            Random rnd = new Random();
+            
 
             for (int row = 0; row < tempMap.Length; row++)
             {
@@ -148,6 +158,7 @@ namespace Dungeon
                             // Create a new enemy to put into the map.
                             Enemy e = ((Enemy)item).MakeCopy();
                             e.Rename(); // Give ghe enemy a cool name. 
+                            e.Hp = rnd.Next(5, 10);
                             e.Position = new Position() { row = row, column = column }; // Save the map position in the enemy
                             outputMap[row][column] = e; // Put the enemy into that map position. 
                         }
@@ -155,7 +166,6 @@ namespace Dungeon
                         {
                             heroPos = new() { row = row, column = column };
                             outputMap[row][column] = item;
-
                         }
                         else
                         {
@@ -207,7 +217,6 @@ namespace Dungeon
 
         public void init()
         {
-
 
         }
 
@@ -263,7 +272,7 @@ namespace Dungeon
                 else if (isThisAEnemy(locationItem) == true)
                 {
                     eventMessage = ((Enemy)locationItem).Attack().Description;
-
+                    hero.HP -= currentDmg;
                 }
                 else if (newLocationDisplayChar == '$')
                 {
@@ -271,7 +280,14 @@ namespace Dungeon
                     heroPos.row = newRow;
                     heroPos.column = newCol;
                     eventMessage = ((Item)levelMap[newRow][newCol]).description;
+                    hero.Gold += addToGold;
                     levelMap[newRow][newCol] = hero;
+                }
+
+                if (hero.HP <= 0)
+                {
+                    Console.Clear();
+                    OnExitScreen(typeof(GameOverScreen), new object[] { hero });
                 }
 
                 delta_y = 0;
