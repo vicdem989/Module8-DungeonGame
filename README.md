@@ -10,10 +10,29 @@ Before you write any code, you should "sketch" the pseudo code and make a flowch
 NB! Some of the requierments might require you to write code not explicitly spelled out in the requierments, use your judgment.
 
 
-- There is no menu, make a sensible menu
-- There is a character sheetish thing for the player but it mostly does nothing, make it so that more than the name has meaning. 
+- There is no menu, make a sensible menu USE MENU FROM PREVIOUS ASSIGNMENTS
+    Play game
+        Char name custom
+        Char class
+            Choose between rogue / warrior or random
+                Rogue: 5hp
+                Warrior: 10hp
+    Settings
+        Language
+    Quit Game
+    
+## There is a character sheetish thing for the player but it mostly does nothing, make it so that more than the name has meaning. 
+
 - Create a gameover screen that summarizes the players achivment (this new screen should redirect to the menu in some whay when the player presses anny key)
+    Show total XP
+    Any relevant stat
+    At the bottom:
+        "Press enter to continue" => redirects to menu
+
 - Currently there are enemies. They dont have an effect give them the abbility to do soemthing.
+    Enemy does damage, you lose that damage to HP
+    If they do less damage than you do, you win
+    
 - Create a new type of pickup.
 
 ### Challenge Requirements (Higher Grades):

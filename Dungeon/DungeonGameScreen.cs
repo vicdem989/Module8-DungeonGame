@@ -102,6 +102,7 @@ namespace Dungeon
             {'X', new Enemy(){Symbole = 'X', Name = "Axe Wielder", Weapon = "Axe", HitPoints = 5, Strength= 8} },
             {'D', new Enemy(){Symbole = 'D', Name = "Ranged attacker", Weapon = "Bow", HitPoints = 5, Strength= 8} },
             {'$', new Item("$")},
+            {'*', new Item("*")},
             {HERO_CHAR, null}
         };
 

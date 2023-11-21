@@ -96,7 +96,7 @@ namespace Dungeon
 
             if (exit)
             {
-                OnExitScreen(typeof(CharacterCreationScreen), null);
+                OnExitScreen(typeof(MenuScreen), null );
             }
         }
 
@@ -108,6 +108,7 @@ namespace Dungeon
                 Console.Clear();
                 Console.WriteLine(outputGraphics);
                 Console.WriteLine(Output.Align("Press Any Key To Start", Alignment.CENTER));
+                
 
             }
         }
