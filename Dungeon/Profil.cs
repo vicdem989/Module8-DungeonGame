@@ -19,6 +19,10 @@ namespace Dungeon
         public int HP { get; set; }
         public int Gold { get; set; }
 
+        public string DebuffType { get; set; } = string.Empty;
+        public int DebuffDuration { get; set; }
+        public int DebuffDamage { get; set; }
+
         public int AvailablePoints { get; set; }
 
 
@@ -26,6 +30,7 @@ namespace Dungeon
         {
             Level = 1;
             AvailablePoints = 20;
+            Strength = 5;
             if (choice == "rogue")
             {
                 HP = 25;
@@ -36,13 +41,16 @@ namespace Dungeon
             }
             else
             {
-                HP = 5;
+                HP = 25;
             }
 
         }
 
         public override string ToString()
         {
+            if (DebuffType != String.Empty)
+                return $"XP ({XP})\nHP ({HP})\nGOLD ({Gold})\nDebuff Type ({DebuffType})\nDuration ({DebuffDuration})\nDamage ({DebuffDamage})";
+
             return $"XP ({XP})\nHP ({HP})\nGOLD ({Gold})";
         }
 

@@ -3,6 +3,7 @@
 
 using System.Dynamic;
 using System.Formats.Asn1;
+using System.Runtime.InteropServices;
 using Microsoft.VisualBasic;
 using Utils;
 
@@ -47,6 +48,7 @@ namespace Dungeon
 
         public Attack Attack()
         {
+            Hero hero = new Hero();
             string method = attackMethods.RandomElement(); // Note: I am using an extension I added to the array type in utils/array.cs to do this.
             Random rnd = new Random();
             int damage = rnd.Next(0, HitPoints + 1);
@@ -59,7 +61,16 @@ namespace Dungeon
             {
                 description = $"{Name} {Hp}  lunges and {method} {Weapon}, causing {ANSICodes.Colors.Red}{ANSICodes.Effects.Bold}massive{ANSICodes.Reset} damage to you";
             }
-            
+
+            if (Hp > 0)
+            {
+                int updatedEnemyHp = Hp - hero.Strength;
+                description += $"\nYou manage to damage {Name}, dealing {hero.Strength} damage! {Name} only has {updatedEnemyHp} hp left!";
+            }
+            else if (Hp <= 0)
+            {
+                description = $"You killed {Name}!";
+            }
 
             DungeonGame.currentDmg = damage;
             return new Dungeon.Attack() { Description = description, Damage = damage };
@@ -87,9 +98,14 @@ namespace Dungeon
             }
             else if (itemType == "*")
             {
+                Hero hero = new Hero();
                 symbole = itemType;
                 value = new Random().Next(3, 8);
                 description = $"A smal viale of poison, doing {value} points of damage";
+                hero.DebuffType = "Posion";
+                hero.DebuffDuration = 5;
+                hero.DebuffDamage = value;
+                hero.HP -= value;
             }
 
         }
@@ -142,7 +158,7 @@ namespace Dungeon
             char[][] tempMap = HelperFunctions.Create2DArrayFromMultiLineString(rawFileData);
             object[][] outputMap = new object[tempMap.Length][];
             Random rnd = new Random();
-            
+
 
             for (int row = 0; row < tempMap.Length; row++)
             {
