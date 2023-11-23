@@ -76,6 +76,7 @@ namespace Dungeon
             {'X', new Enemy(){Symbole = 'X', Name = "Axe Wielder", Weapon = "Axe", HitPoints = 10, Strength= 12} },
             {'D', new Enemy(){Symbole = 'D', Name = "Ranged attacker", Weapon = "Bow", HitPoints = 6, Strength= 10} },
             {'B', new Enemy(){Symbole = 'B', Name = "Boss", Weapon = "Bow", Boss = true, HitPoints = 20, Strength= 16} },
+            {'N', new Npc(){Symbole = 'N', Name = "Npc" } },
             {'$', new Item("$")},
             {'*', new Item("*")},
             {'?', new Item("?")},
@@ -118,7 +119,7 @@ namespace Dungeon
             string rawFileData = HelperFunctions.ReadFile(levelFile);
             char[][] tempMap = HelperFunctions.Create2DArrayFromMultiLineString(rawFileData);
             object[][] outputMap = new object[tempMap.Length][];
-            
+
 
 
             for (int row = 0; row < tempMap.Length; row++)
@@ -136,7 +137,6 @@ namespace Dungeon
                             Enemy e = ((Enemy)item).MakeCopy();
                             e.Rename(); // Give ghe enemy a cool name. 
                             e.Hp = RandomValueDecider(e.HitPoints);
-                            
                             e.XP = RandomValueDecider(e.HitPoints * 2);
                             e.Position = new Position() { row = row, column = column }; // Save the map position in the enemy
                             amountEnemies++;
@@ -177,6 +177,10 @@ namespace Dungeon
             else if (item.GetType() == typeof(Hero))
             {
                 return $"{HERO_CHAR}";
+            }
+            else if (item.GetType() == typeof(Npc))
+            {
+                return $"{((Npc)item).Symbole}";
             }
             else if (item.GetType() == typeof(Item))
             {
@@ -308,6 +312,10 @@ namespace Dungeon
                     heroPos.column = newCol;
                     eventMessage = ((Item)levelMap[newRow][newCol]).description;
                     levelMap[newRow][newCol] = hero;
+                }
+                else if (newLocationDisplayChar == 'N')
+                {
+                    eventMessage = "An NPC!";//((Item)levelMap[newRow][newCol]).description;
                 }
 
                 if (hero.HP <= 0)
