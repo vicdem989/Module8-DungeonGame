@@ -56,11 +56,12 @@ namespace Dungeon
 
         public void draw()
         {
-            if(dirty) {
-            dirty = false;
-            Output.Write($"Level gained: {hero.Level}");
-            Output.Write($"Total gold gained: {hero.Gold}");
-            Output.Write($"Total strength gained: {hero.Strength}");
+            if (dirty)
+            {
+                dirty = false;
+                Output.Write(Output.Align($"Level gained: {hero.Level}", Alignment.CENTER));
+                Output.Write(Output.Align($"Total gold gained: {hero.Gold}", Alignment.CENTER));
+                Output.Write(Output.Align($"Total strength gained: {hero.Strength}", Alignment.CENTER));
             }
         }
 

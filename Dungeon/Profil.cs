@@ -25,6 +25,8 @@ namespace Dungeon
 
         public int AvailablePoints { get; set; }
 
+        public List<string> Inventory = new List<string>();
+
 
         public Hero()
         {
@@ -44,7 +46,7 @@ namespace Dungeon
             else
             {
                 Console.WriteLine(choice);
-                HP = 5;
+                HP = 15;
                 
             }
 

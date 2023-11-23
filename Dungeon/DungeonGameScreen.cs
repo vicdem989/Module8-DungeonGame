@@ -27,7 +27,7 @@ namespace Dungeon
 
     class Item
     {
-
+        public string name { get; set; }
         public string symbole { get; }
         public string description { get; }
         public int value { get; }
@@ -53,11 +53,17 @@ namespace Dungeon
                 hero.DebuffDamage = value;
                 hero.HP -= value;
             }
+            else if (itemType == "!")
+            {
+                symbole = itemType;
+                description = $"POG LOOT!";
+            }
             else if (itemType == "?")
             {
                 symbole = itemType;
                 description = $"An old scroll that will provide you with riches so grand\nTake you further than you could ever imagine\nBut there seems to be too many enemies around ..";
             }
+
 
         }
 
@@ -80,6 +86,7 @@ namespace Dungeon
             {'$', new Item("$")},
             {'*', new Item("*")},
             {'?', new Item("?")},
+            {'!', new ProgressItem(){Symbole = '!', Name = "Level1Scroll" } },
             {HERO_CHAR, null}
         };
 
@@ -144,7 +151,6 @@ namespace Dungeon
                         }
                         else if (item.GetType() == typeof(Npc))
                         {
-
                             Npc n = ((Npc)item).MakeCopy();
                             n.Rename();
                             n.GiveType();
@@ -156,6 +162,13 @@ namespace Dungeon
                         {
                             heroPos = new() { row = row, column = column };
                             outputMap[row][column] = item;
+                        }
+                        else if (item.GetType() == typeof(ProgressItem))
+                        {
+                            ProgressItem pItem = ((ProgressItem)item).MakeCopy();
+                            pItem.Name = "THE BOSS";
+                            pItem.Description = "BIG DESCRIPTION!";
+                            outputMap[row][column] = pItem;
                         }
                         else
                         {
@@ -195,6 +208,10 @@ namespace Dungeon
             else if (item.GetType() == typeof(Item))
             {
                 return $"{((Item)item).symbole}";
+            }
+            else if (item.GetType() == typeof(ProgressItem))
+            {
+                return $"{((ProgressItem)item).Symbole}";
             }
 
             return $"{item}";
@@ -252,10 +269,10 @@ namespace Dungeon
 
         public void update()
         {
-            
+
             if (playerMoved)
             {
-                
+
                 Console.WriteLine(amountEnemies);
                 playerMoved = false;
 
@@ -277,7 +294,8 @@ namespace Dungeon
                 {
                     if (((Enemy)locationItem).Boss)
                     {
-                        
+                        eventMessage = ((Enemy)locationItem).Attack().Description;
+
                     }
                     else
                     {
@@ -317,12 +335,12 @@ namespace Dungeon
                     hero.Gold += addToGold;
                     levelMap[newRow][newCol] = hero;
                 }
-                else if (newLocationDisplayChar == '?')
+                else if (newLocationDisplayChar == '!')
                 {
                     levelMap[heroPos.row][heroPos.column] = ' ';
                     heroPos.row = newRow;
                     heroPos.column = newCol;
-                    eventMessage = ((Item)levelMap[newRow][newCol]).description;
+                    eventMessage = "ooga booga";
                     levelMap[newRow][newCol] = hero;
                 }
                 else if (newLocationDisplayChar == 'N')

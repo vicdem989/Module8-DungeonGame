@@ -23,8 +23,8 @@ NB! Some of the requierments might require you to write code not explicitly spel
     
 ## There is a character sheetish thing for the player but it mostly does nothing, make it so that more than the name has meaning. 
 
-- Create a gameover screen that summarizes the players achivment (this new screen should redirect to the menu in some whay when the player presses anny key)
-    Show total XP
+## Create a gameover screen that summarizes the players achivment (this new screen should redirect to the menu in some whay when the player presses anny key)
+##    Show total XP
     Any relevant stat
     At the bottom:
         "Press enter to continue" => redirects to menu
