@@ -49,9 +49,12 @@ namespace Dungeon
         public override string ToString()
         {
             if (DebuffType != String.Empty)
-                return $"XP ({XP})\nHP ({HP})\nGOLD ({Gold})\nDebuff Type ({DebuffType})\nDuration ({DebuffDuration})\nDamage ({DebuffDamage})";
+            {
+                return $"XP ({XP})\nHP ({HP})\nGOLD ({Gold})\nDebuff Type ({DebuffType})\nDuration ({DebuffDuration})\nDamage ({DebuffDamage} AWOOOOOGA)";
 
-            return $"XP ({XP})\nHP ({HP})\nGOLD ({Gold})";
+            }
+
+            return $"XP ({XP})\nHP ({HP})\nGOLD ({Gold})\nDebuff Type ({DebuffType})\nDuration ({DebuffDuration})\nDamage ({DebuffDamage})";
         }
 
     }

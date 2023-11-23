@@ -1,8 +1,10 @@
 
 
 
+using System.ComponentModel;
 using System.Dynamic;
 using System.Formats.Asn1;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic;
 using Utils;
@@ -21,66 +23,10 @@ namespace Dungeon
         public int Damage { get; set; }
     }
 
-    class Enemy
-    {
-        public Position Position { get; set; }
-        public char Symbole { get; set; }
-        public string Name { get; set; }
-        public string Weapon { get; set; }
-        public int HitPoints { get; set; }
-        public int Strength { get; set; }
-        public int Hp { get; set; }
 
-        private string[] adventureGameCharacterNames = new string[] { "Aria", "Thorin", "Zara", "Jasper", "Elena", "Cedric", "Lyra", "Orion", "Seraphina", "Gareth" };
-        private string[] adventureGameSurnames = new string[] { "the Brave", "Ironheart", "Shadowwalker", "the Wise", "Stormchaser", "Dragonbane", "Nightwhisper", "the Fearless", "Oakenshield", "Lightbringer" };
-        private string[] attackMethods = { "slashes with", "throws the", "stabs using the" };
-
-        public Enemy MakeCopy()
-        {
-            return (Enemy)this.MemberwiseClone();
-        }
-
-        public void Rename()
-        {
-            Name = $"{adventureGameCharacterNames.RandomElement()} {adventureGameSurnames.RandomElement()}";
-        }
-
-
-        public Attack Attack()
-        {
-            Hero hero = new Hero();
-            string method = attackMethods.RandomElement(); // Note: I am using an extension I added to the array type in utils/array.cs to do this.
-            Random rnd = new Random();
-            int damage = rnd.Next(0, HitPoints + 1);
-            string description = $"{Name} {Hp} {method} {Weapon}, causing {ANSICodes.Colors.Red}{damage}{ANSICodes.Reset} damage to you";
-            if (damage == 0) // Epic failure 
-            {
-                description = $"{Name} {Hp} trys to {method} {Weapon}, but misses fantasticly";
-            }
-            else if (damage == HitPoints) // Critical hit
-            {
-                description = $"{Name} {Hp}  lunges and {method} {Weapon}, causing {ANSICodes.Colors.Red}{ANSICodes.Effects.Bold}massive{ANSICodes.Reset} damage to you";
-            }
-
-            if (Hp > 0)
-            {
-                int updatedEnemyHp = Hp - hero.Strength;
-                description += $"\nYou manage to damage {Name}, dealing {hero.Strength} damage! {Name} only has {updatedEnemyHp} hp left!";
-            }
-            else if (Hp <= 0)
-            {
-                description = $"You killed {Name}!";
-            }
-
-            DungeonGame.currentDmg = damage;
-            return new Dungeon.Attack() { Description = description, Damage = damage };
-
-        }
-    }
 
     class Item
     {
-
 
         public string symbole { get; }
         public string description { get; }
@@ -93,7 +39,7 @@ namespace Dungeon
             {
                 symbole = itemType;
                 value = new Random().Next(5, 21);
-                description = $"A small bag of loot with the value {value}";
+                description = $"A small bag of loot with the value {ANSICodes.Colors.Yellow}{value}{ANSICodes.Reset}";
                 DungeonGame.addToGold = value;
             }
             else if (itemType == "*")
@@ -101,11 +47,16 @@ namespace Dungeon
                 Hero hero = new Hero();
                 symbole = itemType;
                 value = new Random().Next(3, 8);
-                description = $"A smal viale of poison, doing {value} points of damage";
-                hero.DebuffType = "Posion";
+                description = $"A smal vial of {ANSICodes.Colors.Green}poison{ANSICodes.Reset}, doing {value} points of damage!";
+                hero.DebuffType = "Poison";
                 hero.DebuffDuration = 5;
                 hero.DebuffDamage = value;
                 hero.HP -= value;
+            }
+            else if (itemType == "?")
+            {
+                symbole = itemType;
+                description = $"An old scroll that will provide you with riches so grand\nTake you further than you could ever imagine\nBut there seems to be too many enemies around ..";
             }
 
         }
@@ -115,6 +66,8 @@ namespace Dungeon
     public class DungeonGame : GameEngine.IScene
     {
 
+        #region Variable Declaration
+
         const char HERO_CHAR = 'H';
 
         static Dictionary<char, Object> GAME_ITEMS = new(){
@@ -122,8 +75,10 @@ namespace Dungeon
             {'█', "█"},
             {'X', new Enemy(){Symbole = 'X', Name = "Axe Wielder", Weapon = "Axe", HitPoints = 5, Strength= 8} },
             {'D', new Enemy(){Symbole = 'D', Name = "Ranged attacker", Weapon = "Bow", HitPoints = 5, Strength= 8} },
+            {'B', new Enemy(){Symbole = 'B', Name = "Boss", Weapon = "Bow", Boss = true, HitPoints = 10, Strength= 16} },
             {'$', new Item("$")},
             {'*', new Item("*")},
+            {'?', new Item("?")},
             {HERO_CHAR, null}
         };
 
@@ -137,11 +92,17 @@ namespace Dungeon
 
         public static int currentDmg;
         public static int addToGold;
+        public static int addToXP;
+        public static bool EnemyDead = false;
+
+        public static int amountEnemies = 0;
 
 
         object[][] levelMap;
 
         string eventMessage;
+
+        #endregion
 
         public DungeonGame(Hero hero)
         {
@@ -175,7 +136,11 @@ namespace Dungeon
                             Enemy e = ((Enemy)item).MakeCopy();
                             e.Rename(); // Give ghe enemy a cool name. 
                             e.Hp = rnd.Next(5, 10);
+                            int minXP = e.Hp / 2;
+                            int maxXp = e.Hp * 2;
+                            e.XP = rnd.Next(minXP, maxXp);
                             e.Position = new Position() { row = row, column = column }; // Save the map position in the enemy
+                            amountEnemies++;
                             outputMap[row][column] = e; // Put the enemy into that map position. 
                         }
                         else if (item.GetType() == typeof(Hero))
@@ -219,7 +184,6 @@ namespace Dungeon
             if (mappLocationItem != null)
             {
                 return mappLocationItem.GetType() == typeof(Enemy);
-
             }
             return false;
         }
@@ -241,12 +205,12 @@ namespace Dungeon
             if (Console.KeyAvailable)
             {
                 ConsoleKey keyCode = Console.ReadKey(true).Key;
-                if (keyCode == ConsoleKey.DownArrow || keyCode == ConsoleKey.W)
+                if (keyCode == ConsoleKey.DownArrow || keyCode == ConsoleKey.S)
                 {
                     delta_y = 1;
 
                 }
-                else if (keyCode == ConsoleKey.UpArrow || keyCode == ConsoleKey.S)
+                else if (keyCode == ConsoleKey.UpArrow || keyCode == ConsoleKey.W)
                 {
                     delta_y = -1;
                 }
@@ -269,6 +233,7 @@ namespace Dungeon
         {
             if (playerMoved)
             {
+                Console.WriteLine(amountEnemies);
                 playerMoved = false;
 
                 int newRow = heroPos.row + delta_y;
@@ -287,8 +252,27 @@ namespace Dungeon
                 }
                 else if (isThisAEnemy(locationItem) == true)
                 {
-                    eventMessage = ((Enemy)locationItem).Attack().Description;
+                    if (((Enemy)locationItem).Boss)
+                    {
+                        
+                    } else {
+                        eventMessage = ((Enemy)locationItem).Attack().Description;
+                    }
                     hero.HP -= currentDmg;
+
+                    
+
+                    if (EnemyDead)
+                    {
+                        levelMap[heroPos.row][heroPos.column] = ' ';
+                        heroPos.row = newRow;
+                        heroPos.column = newCol;
+                        hero.Gold += addToGold;
+                        hero.XP += addToXP;
+                        levelMap[newRow][newCol] = hero;
+                        EnemyDead = false;
+                    }
+
                 }
                 else if (newLocationDisplayChar == '$')
                 {
@@ -299,6 +283,23 @@ namespace Dungeon
                     hero.Gold += addToGold;
                     levelMap[newRow][newCol] = hero;
                 }
+                else if (newLocationDisplayChar == '*')
+                {
+                    levelMap[heroPos.row][heroPos.column] = ' ';
+                    heroPos.row = newRow;
+                    heroPos.column = newCol;
+                    eventMessage = ((Item)levelMap[newRow][newCol]).description;
+                    hero.Gold += addToGold;
+                    levelMap[newRow][newCol] = hero;
+                }
+                else if (newLocationDisplayChar == '?')
+                {
+                    levelMap[heroPos.row][heroPos.column] = ' ';
+                    heroPos.row = newRow;
+                    heroPos.column = newCol;
+                    eventMessage = ((Item)levelMap[newRow][newCol]).description;
+                    levelMap[newRow][newCol] = hero;
+                }
 
                 if (hero.HP <= 0)
                 {
@@ -306,6 +307,11 @@ namespace Dungeon
                     OnExitScreen(typeof(GameOverScreen), new object[] { hero });
                 }
 
+                if (amountEnemies <= 0)
+                {
+                    levelMap = LoadLevel("levels/level2.txt");
+                    eventMessage = $"{ANSICodes.Effects.Bold}{ANSICodes.Colors.Red}The scroll has summoned you! Defeat the boss..\nAnd the riches are yours!{ANSICodes.Reset}";
+                }
                 delta_y = 0;
                 delta_x = 0;
                 dirty = true;
