@@ -59,6 +59,8 @@ namespace Dungeon
             if(dirty) {
             dirty = false;
             Output.Write($"Level gained: {hero.Level}");
+            Output.Write($"Total gold gained: {hero.Gold}");
+            Output.Write($"Total strength gained: {hero.Strength}");
             }
         }
 

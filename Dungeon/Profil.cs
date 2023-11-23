@@ -34,27 +34,31 @@ namespace Dungeon
             if (choice == "rogue")
             {
                 HP = 25;
+                Strength = 5;
             }
             else if (choice == "warrior")
             {
                 HP = 50;
+                Strength = 10;
             }
             else
             {
-                HP = 25;
+                Console.WriteLine(choice);
+                HP = 5;
+                
             }
 
         }
 
         public override string ToString()
         {
-            if (DebuffType != String.Empty)
+            if (DebuffType != string.Empty)
             {
                 return $"XP ({XP})\nHP ({HP})\nGOLD ({Gold})\nDebuff Type ({DebuffType})\nDuration ({DebuffDuration})\nDamage ({DebuffDamage} AWOOOOOGA)";
 
             }
 
-            return $"XP ({XP})\nHP ({HP})\nGOLD ({Gold})\nDebuff Type ({DebuffType})\nDuration ({DebuffDuration})\nDamage ({DebuffDamage})";
+            return $"XP ({XP})\nHP ({HP})\nGold ({Gold})\nStrength ({Strength})\n";
         }
 
     }

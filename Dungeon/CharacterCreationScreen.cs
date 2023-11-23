@@ -39,9 +39,15 @@ namespace Dungeon
                 hero.name = Console.ReadLine();
                 Console.Clear();
             }
-
-            Output.Write("Choose class: (Either Rogue or Warrior)");
             hero.choice = "rogue";
+            /*Output.Write("Choose class: (Either Rogue or Warrior)");
+            Output.Write("1 for Rogue, 2 for Warrior");
+            string input = Console.ReadLine();
+            if(input == "1") {
+                hero.choice = "rogue";
+            } else if(input == "2") {
+                hero.choice = "warrior";
+            }*/
 
 
 

@@ -142,6 +142,16 @@ namespace Dungeon
                             amountEnemies++;
                             outputMap[row][column] = e; // Put the enemy into that map position. 
                         }
+                        else if (item.GetType() == typeof(Npc))
+                        {
+
+                            Npc n = ((Npc)item).MakeCopy();
+                            n.Rename();
+                            n.GiveType();
+                            n.GiveExperience();
+                            n.GetDescription();
+                            outputMap[row][column] = n;
+                        }
                         else if (item.GetType() == typeof(Hero))
                         {
                             heroPos = new() { row = row, column = column };
@@ -242,8 +252,10 @@ namespace Dungeon
 
         public void update()
         {
+            
             if (playerMoved)
             {
+                
                 Console.WriteLine(amountEnemies);
                 playerMoved = false;
 
@@ -265,7 +277,7 @@ namespace Dungeon
                 {
                     if (((Enemy)locationItem).Boss)
                     {
-
+                        
                     }
                     else
                     {
@@ -315,7 +327,37 @@ namespace Dungeon
                 }
                 else if (newLocationDisplayChar == 'N')
                 {
-                    eventMessage = "An NPC!";//((Item)levelMap[newRow][newCol]).description;
+                    ((Npc)levelMap[newRow][newCol]).Visits++;
+                    eventMessage = $"{ANSICodes.Effects.Bold}" + ((Npc)levelMap[newRow][newCol]).Name + " a " + ((Npc)levelMap[newRow][newCol]).Experience + " " + ((Npc)levelMap[newRow][newCol]).Type + $"{ANSICodes.Reset}\n" + ((Npc)levelMap[newRow][newCol]).Description;
+                    if (((Npc)levelMap[newRow][newCol]).Visits == 1)
+                    {
+                        string type = String.Empty;
+                        int stats = ((Npc)levelMap[newRow][newCol]).GetStats(hero.Level);
+                        if (((Npc)levelMap[newRow][newCol]).Type == Npc.TYPEMERCHANT)
+                        {
+                            hero.Gold += stats;
+                            type = "gold";
+                        }
+                        else if (((Npc)levelMap[newRow][newCol]).Type == Npc.TYPEWIZARD)
+                        {
+
+                            type = "error. type not yet implemented";
+                        }
+                        else if (((Npc)levelMap[newRow][newCol]).Type == Npc.TYPEWARRIOR)
+                        {
+                            hero.Strength += stats;
+                            type = "strength";
+                        }
+                        eventMessage += $"\n{ANSICodes.Colors.Magenta}+{stats}{ANSICodes.Reset} {type}!";
+                    }
+                    else if (((Npc)levelMap[newRow][newCol]).Visits > 1)
+                    {
+                        eventMessage = "Screw this, I AM OUT!";
+                        levelMap[heroPos.row][heroPos.column] = ' ';
+                        heroPos.row = newRow;
+                        heroPos.column = newCol;
+                        levelMap[newRow][newCol] = hero;
+                    }
                 }
 
                 if (hero.HP <= 0)
@@ -324,7 +366,7 @@ namespace Dungeon
                     OnExitScreen(typeof(GameOverScreen), new object[] { hero });
                 }
 
-                if (amountEnemies <= 0)
+                if (amountEnemies == 0)
                 {
                     levelMap = LoadLevel("levels/level2.txt");
                     eventMessage = $"{ANSICodes.Effects.Bold}{ANSICodes.Colors.Red}The scroll has summoned you! Defeat the boss..\nAnd the riches are yours!{ANSICodes.Reset}";

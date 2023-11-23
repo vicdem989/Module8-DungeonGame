@@ -11,15 +11,15 @@ NB! Some of the requierments might require you to write code not explicitly spel
 
 
 - There is no menu, make a sensible menu USE MENU FROM PREVIOUS ASSIGNMENTS
-    Play game
-        Char name custom
+##    Play game
+##        Char name custom
         Char class
             Choose between rogue / warrior or random
                 Rogue: 5hp
                 Warrior: 10hp
     Settings
         Language
-    Quit Game
+ ##   Quit Game
     
 ## There is a character sheetish thing for the player but it mostly does nothing, make it so that more than the name has meaning. 
 
@@ -29,17 +29,17 @@ NB! Some of the requierments might require you to write code not explicitly spel
     At the bottom:
         "Press enter to continue" => redirects to menu
 
-- Currently there are enemies. They dont have an effect give them the abbility to do soemthing.
+## DONE- Currently there are enemies. They dont have an effect give them the abbility to do soemthing.
     Enemy does damage, you lose that damage to HP
     If they do less damage than you do, you win
     
-- Create a new type of pickup.
+## DONE Create a new type of pickup.
 
 ### Challenge Requirements (Higher Grades):
 
 - Make a new NPC that moves.
 
-- Make friendly NPC.
+## DONE Make friendly NPC.
 
 
 Evryone: In your README file write about what you learnt from this module.
