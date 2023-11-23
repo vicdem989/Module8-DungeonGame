@@ -73,9 +73,9 @@ namespace Dungeon
         static Dictionary<char, Object> GAME_ITEMS = new(){
             {' ', " "},
             {'█', "█"},
-            {'X', new Enemy(){Symbole = 'X', Name = "Axe Wielder", Weapon = "Axe", HitPoints = 5, Strength= 8} },
-            {'D', new Enemy(){Symbole = 'D', Name = "Ranged attacker", Weapon = "Bow", HitPoints = 5, Strength= 8} },
-            {'B', new Enemy(){Symbole = 'B', Name = "Boss", Weapon = "Bow", Boss = true, HitPoints = 10, Strength= 16} },
+            {'X', new Enemy(){Symbole = 'X', Name = "Axe Wielder", Weapon = "Axe", HitPoints = 10, Strength= 12} },
+            {'D', new Enemy(){Symbole = 'D', Name = "Ranged attacker", Weapon = "Bow", HitPoints = 6, Strength= 10} },
+            {'B', new Enemy(){Symbole = 'B', Name = "Boss", Weapon = "Bow", Boss = true, HitPoints = 20, Strength= 16} },
             {'$', new Item("$")},
             {'*', new Item("*")},
             {'?', new Item("?")},
@@ -118,7 +118,7 @@ namespace Dungeon
             string rawFileData = HelperFunctions.ReadFile(levelFile);
             char[][] tempMap = HelperFunctions.Create2DArrayFromMultiLineString(rawFileData);
             object[][] outputMap = new object[tempMap.Length][];
-            Random rnd = new Random();
+            
 
 
             for (int row = 0; row < tempMap.Length; row++)
@@ -135,10 +135,9 @@ namespace Dungeon
                             // Create a new enemy to put into the map.
                             Enemy e = ((Enemy)item).MakeCopy();
                             e.Rename(); // Give ghe enemy a cool name. 
-                            e.Hp = rnd.Next(5, 10);
-                            int minXP = e.Hp / 2;
-                            int maxXp = e.Hp * 2;
-                            e.XP = rnd.Next(minXP, maxXp);
+                            e.Hp = RandomValueDecider(e.HitPoints);
+                            
+                            e.XP = RandomValueDecider(e.HitPoints * 2);
                             e.Position = new Position() { row = row, column = column }; // Save the map position in the enemy
                             amountEnemies++;
                             outputMap[row][column] = e; // Put the enemy into that map position. 
@@ -158,6 +157,14 @@ namespace Dungeon
             }
 
             return outputMap;
+        }
+
+        private int RandomValueDecider(int maxValueCeiling)
+        {
+            Random rnd = new Random();
+            int minValue = maxValueCeiling / 2;
+            int maxvalue = maxValueCeiling;
+            return rnd.Next(minValue, maxvalue);
         }
 
         string GetDisplaySymboleFor(object item)
@@ -254,13 +261,15 @@ namespace Dungeon
                 {
                     if (((Enemy)locationItem).Boss)
                     {
-                        
-                    } else {
+
+                    }
+                    else
+                    {
                         eventMessage = ((Enemy)locationItem).Attack().Description;
                     }
                     hero.HP -= currentDmg;
 
-                    
+
 
                     if (EnemyDead)
                     {
