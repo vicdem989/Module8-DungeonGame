@@ -386,6 +386,7 @@ namespace Dungeon
 
                 if (amountEnemies == 0)
                 {
+                    GameOverScreen.won = true;
                     levelMap = LoadLevel("levels/level2.txt");
                     eventMessage = $"{ANSICodes.Effects.Bold}{ANSICodes.Colors.Red}The scroll has summoned you! Defeat the boss..\nAnd the riches are yours!{ANSICodes.Reset}";
                 }

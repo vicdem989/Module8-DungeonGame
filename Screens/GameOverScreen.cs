@@ -15,6 +15,7 @@ namespace Dungeon
         private bool back = false;
         private bool dirty = true;
         Hero hero;
+        public static bool won = false;
 
         #endregion
 
@@ -33,7 +34,12 @@ namespace Dungeon
         {
             Console.Clear();
             this.hero = hero;
-            Console.WriteLine(Output.Align("Stats:", Alignment.CENTER));
+            if(won) {
+                Output.Write($"{ANSICodes.Colors.Green}{ANSICodes.Effects.Bold}You Won!{ANSICodes.Reset}", true);
+            } else {
+                Output.Write($"{ANSICodes.Colors.Red}{ANSICodes.Effects.Bold}You Lost!{ANSICodes.Reset}", true);
+            }
+            Console.WriteLine("Stats:", true);
         }
 
         public void input()
@@ -59,9 +65,9 @@ namespace Dungeon
             if (dirty)
             {
                 dirty = false;
-                Output.Write(Output.Align($"Level gained: {hero.Level}", Alignment.CENTER));
-                Output.Write(Output.Align($"Total gold gained: {hero.Gold}", Alignment.CENTER));
-                Output.Write(Output.Align($"Total strength gained: {hero.Strength}", Alignment.CENTER));
+                Output.Write($"Level gained: {hero.Level}", true);
+                Output.Write($"Total gold gained: {hero.Gold}", true);
+                Output.Write($"Total strength gained: {hero.Strength}", true);
             }
         }
 
