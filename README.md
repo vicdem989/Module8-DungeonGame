@@ -1,50 +1,15 @@
+Dungeon game was also a very fun module. However, for some reason I managed to break the game before delivering and I could not fix it.
 
-#Dungon 
+For some reason you can't choose either rogue or warrior in the menu. It's a simple if(rogue) do this) if(warrior) do this. But for some reason it does not work :c Currently the attributes are hardcoded. 
 
-## Project Requirements:
+In the settings tab I wanted to implement language. It would be as simple as copy pasting from my previous assignments but I did not have time to implement it. 
 
-You must work from the code in https://github.com/CodeCraftCurriculum-I/module_8_dungon
+Currently in the game you can attack, dmg, and kill mobs. While also taking damage or die. The mobs drops gold.
+There are NPCs, with randomized types and level. Meaning, if you get a merchant you get gold, if its a warrior you get strength etc. I also wanted to scale the amount you get with your level, the higher or lower your level, the higher or lower the amount of stats you get. If you go to the NPC twice, it does get annoyed and leaves you. 
 
-Before you write any code, you should "sketch" the pseudo code and make a flowchart for how you plan to do the following alterations to the game.
+There are two marks for items you can interact with. ? is treasure or a side quest. ! is a progression items. The plan for the ! was to have to instances. If you pick up the ! without killing the mobs, you are prompted to kill the mobs and then go to the boss fight. If you kill the mobs without picking up the !, you are prompted to explore the map until you find it. 
 
-NB! Some of the requierments might require you to write code not explicitly spelled out in the requierments, use your judgment.
-
-
-- There is no menu, make a sensible menu USE MENU FROM PREVIOUS ASSIGNMENTS
-##    Play game
-##        Char name custom
-        Char class
-            Choose between rogue / warrior or random
-                Rogue: 5hp
-                Warrior: 10hp
-    Settings
-        Language
- ##   Quit Game
-    
-## There is a character sheetish thing for the player but it mostly does nothing, make it so that more than the name has meaning. 
-
-## Create a gameover screen that summarizes the players achivment (this new screen should redirect to the menu in some whay when the player presses anny key)
-##    Show total XP
-    Any relevant stat
-    At the bottom:
-        "Press enter to continue" => redirects to menu
-
-## DONE- Currently there are enemies. They dont have an effect give them the abbility to do soemthing.
-    Enemy does damage, you lose that damage to HP
-    If they do less damage than you do, you win
-    
-## DONE Create a new type of pickup.
-
-### Challenge Requirements (Higher Grades):
-
-- Make a new NPC that moves.
-
-## DONE Make friendly NPC.
-
-
-Evryone: In your README file write about what you learnt from this module.
-
-All your code and related files should be neatly organized in a Zip file, with the following internal structure
+The * symbol is supposed to be a debuff which will interact with you. Either poison for health damage, weakness pot for less strength etc. When interacting with the * it does get removed and you do get the debuff status. However, for some reason it wont damage your health. The plan was to use my poison tick implementation from module 4 so that every move you make the debuff takes place.
 
 module_8_Dungon  
 ├── .vscode  
